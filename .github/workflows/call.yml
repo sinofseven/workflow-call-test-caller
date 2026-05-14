@@ -1,0 +1,19 @@
+on:
+  push:
+
+jobs:
+  create-jwt:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    steps:
+      - name: Get JWT
+        id: get-jwt
+        run: |
+          TOKEN=$(curl -sf \
+            -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=test-audience" \
+            | jq -r '.value')
+          echo "token=$TOKEN" >> $GITHUB_OUTPUT
+      - name: Show JWT
+        run: echo "${{ steps.get-jwt.outputs.token }}"
