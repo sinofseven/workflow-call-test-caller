@@ -15,8 +15,11 @@ jobs:
             "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=test-audience" \
             | jq -r '.value')
           echo "token=$TOKEN" >> $GITHUB_OUTPUT
+      - name: get by action
+        id: get-by-action
+        uses: sinofseven/workflow-call-test-action-generate-id-token@v1.0.0
       - name: Show JWT
-        run: echo "${{ steps.get-jwt.outputs.token }}" > jwt.txt
+        run: echo "${{ steps.get-by-action.outputs.token }}" > jwt.txt
       - name: Upload JWT artifact
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
