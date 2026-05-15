@@ -15,11 +15,16 @@ jobs:
         id: get-token
         with:
           audience: test
-      - run: echo "$TOKEN" > jwt.txt
-        env:
-          TOKEN: ${{ steps.get-token.outputs.jwt-token }}
-      - name: Upload JWT artifact
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/create-github-app-token@v3
+        id: get-pat
         with:
-          name: jwt
-          path: jwt.txt
+          client-id: Iv23livz86i46FXV6gNa
+          private-key: ${{ secrets.PRIVATE_KEY_LUCIFEROUS_TAP_PAT_PROVIDER }}
+          owner: sinofseven
+          repositories: workflow-call-test-function
+      - uses: sinofseven/action-repository-dispatch@v1.0.0
+        with:
+          target_repo: sinofseven/workflow-call-test-function
+          event_type: update
+          token: ${{ steps.get-pat.outputs.token }}
+          payload: '{"jwt": "${{ steps.get-token.outputs.jwt-token }}"}'
